@@ -1,0 +1,46 @@
+<nz-drawer
+      [nzClosable]="true"
+      [nzVisible]="isVisibleBill"
+      [nzPlacement]="placement"
+      [nzTitle]="'HÓA ĐƠN [Mã: '+this.bill.id+']'"
+      nzSize="large"
+      [nzExtra]="extra"
+      (nzOnClose)="close()"
+    >
+      <ng-container *nzDrawerContent>
+        <nz-table #table_compare [nzData]="this.bill.products" [nzShowPagination]="false">
+          <thead>
+            <tr>
+              <th>Sản phẩm</th>
+              <th>Độ dài</th>
+              <th>Số lượng</th>
+              <th>Giá</th>
+              <th>Thành tiền</th>
+            </tr>
+          </thead>
+          <tbody *ngIf="table_compare.data.length>0">
+            <tr *ngFor="let data of table_compare.data">
+              <td>{{data.name + ' ' +data.tm}}</td>
+              <td>{{data.length}}</td>
+              <td>{{data.qty}}</td>
+              <td>{{this.crud.formatNumberToPrice(data.price)}}</td>
+              <td *ngIf="data.style=='length'">{{this.crud.formatNumberToPrice(data.qty*data.length/1000*data.price)}}</td>
+              <td *ngIf="data.style=='qty'">{{this.crud.formatNumberToPrice(data.qty*data.price)}}</td>
+            </tr>
+            <tr>
+              <td [colSpan]="4" style="text-align: center;">TỔNG:</td>
+              <td>{{this.crud.formatNumberToPrice(this.bill.value)}}</td>
+            </tr>
+          </tbody>
+        </nz-table>
+      </ng-container>
+</nz-drawer>
+
+<ng-template #extra>
+  <button nz-button nzDanger
+   nz-popconfirm
+    nzPopconfirmTitle="Chắc chắn muốn xóa hóa đơn này không ạ?"
+    [nzOkText]="'Có'"
+    [nzCancelText]="'Không'"
+    (nzOnConfirm)="deleteBill()">Xóa hóa đơn</button>
+</ng-template>

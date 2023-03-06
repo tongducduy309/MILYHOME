@@ -1,0 +1,98 @@
+<nz-row>
+  <nz-col nzSpan="8">
+    <nz-input-group [nzSuffix]="suffixIconSearch">
+      <input type="text" nz-input placeholder="Nhập mã hoặc tên sản phẩm" [(ngModel)]="search.id" (ngModelChange)="selected()" nzAllowClear />
+    </nz-input-group>
+    <ng-template #suffixIconSearch>
+      <span nz-icon nzType="search" *ngIf="this.search.id==''" style="color: #bfbfbf;"></span>
+      <span nz-icon nzType="close-circle" nzTheme="fill" *ngIf="this.search.id!=''" style="color: #bfbfbf;" (click)="this.search.id='';selected()"></span>
+    </ng-template>
+  </nz-col>
+  <nz-col nzSpan="5">
+    <nz-select [(ngModel)]="search.category" (ngModelChange)="selected()" nzPlaceHolder="Chọn danh mục" style="width: 100%;margin: 0 2px;" [nzNotFoundContent]="EmptyData" nzAllowClear>
+      <nz-option *ngFor="let cate of categories" [nzValue]="cate.category" [nzLabel]="cate.category"></nz-option>
+
+    </nz-select>
+  </nz-col>
+  <nz-col nzSpan="5">
+    <nz-select [(ngModel)]="search.trademark" (ngModelChange)="selected()" nzPlaceHolder="Chọn hãng" style="width: 100%;" [nzNotFoundContent]="EmptyData" nzAllowClear>
+      <nz-option *ngFor="let trm of trademarks" [nzValue]="trm.name" [nzLabel]="trm.name"></nz-option>
+
+    </nz-select>
+  </nz-col>
+  <nz-col nzSpan="6" style="display: flex;justify-content: right;">
+    <nz-row style="align-items: center;">
+      <h4 style="margin-left: 10px;">Tạo hóa đơn</h4>
+      <nz-switch [(ngModel)]="modeCreBill" style="margin-left: 10px;"></nz-switch>
+      <span nz-icon nzType="plus" nzTheme="outline" style="color:rgb(54, 162, 235);cursor: pointer;margin-left: 10px;" (click)="isVisibleAddCraftBill=true;"></span>
+    </nz-row>
+  </nz-col>
+</nz-row>
+<div class="table-compare" style="margin-top: 20px;">
+  <nz-table #table_compare [nzData]="this.dataSet" [nzPageSize]="5" nzNoResult="Hiện tại không tìm thấy sản phẩm tương tự">
+    <thead>
+      <tr>
+        <th rowspan="2">STT</th>
+        <th rowspan="2">Mã sản phẩm</th>
+        <th rowspan="2">Sản phẩm</th>
+        <th rowspan="2">Hãng</th>
+        <th rowspan="2">Giá</th>
+
+        <th colSpan="2">Trong kho</th>
+
+        <th rowspan="2"></th>
+      </tr>
+      <tr>
+        <th>Số lượng</th>
+        <th>Độ dài (m)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of table_compare.data;index as i;">
+        <td>{{i+1}}</td>
+        <td>{{data._id}}</td>
+        <td>{{data.name + ' '+data.thickness}}</td>
+        <td>{{data.tm}}</td>
+        <td>{{this.crud.formatNumberToPrice(data.price)}}</td>
+        <td>{{data.qty}}</td>
+        <td>{{data.length}}</td>
+        <td>
+          <span nz-icon nzType="plus" nzTheme="outline" style="color:rgb(54, 162, 235);cursor: pointer;" (click)="isWrite=true;selectProduct=data;"></span>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>
+
+<nz-modal [(nzVisible)]="isWrite" nzCancelText="Hủy" nzOkText="Đồng ý" nzClosable="false" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk(lengthInput,qtyInput,selectProduct)">
+  <ng-container *nzModalContent>
+    <nz-row style="justify-content: space-between; align-items: center;">
+      <nz-col [nzSpan]="(modeCreBill==true)?11:24" *ngIf="selectProduct.category.style=='length'">
+        <span>Chiều dài</span>
+        <input nz-input placeholder="Chiều dài" [(ngModel)]="lengthInput" style="margin-top: 10px;"/>
+      </nz-col>
+      <nz-col [nzSpan]="(selectProduct.category.style=='qty')?24:11" *ngIf="selectProduct.category.style=='qty'||modeCreBill==true" style="margin-left: 10px;">
+        <span>Số lượng</span>
+        <nz-input-number [nzMin]="1" [nzMax]="100000" [nzStep]="1" [(ngModel)]="qtyInput" style="margin-top: 10px;width: 100%;"></nz-input-number>
+      </nz-col>
+    </nz-row>
+  </ng-container>
+</nz-modal>
+
+<nz-drawer
+      [nzClosable]="true"
+      [nzVisible]="isVisibleAddCraftBill"
+      nzPlacement="right"
+      nzTitle="THÊM SẢN PHẨM"
+      nzSize="large"
+
+      (nzOnClose)="isVisibleAddCraftBill=false"
+    >
+      <ng-container *nzDrawerContent>
+        <app-storage [titleSpan]="{btnSubmit:'Thêm sản phẩm khác'}"  [parent]="2"></app-storage>
+      </ng-container>
+</nz-drawer>
+
+<ng-template #EmptyData>
+  <span ><span nz-icon nzType="inbox" nzTheme="outline"></span>    Hiện tại chưa có dữ liệu </span>
+</ng-template>

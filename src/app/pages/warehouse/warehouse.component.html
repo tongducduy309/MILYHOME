@@ -1,0 +1,90 @@
+<nz-row>
+    <nz-col nzSpan="10">
+      <nz-input-group [nzSuffix]="suffixIconSearch">
+        <input type="text" nz-input placeholder="Nhập mã hoặc tên sản phẩm" [(ngModel)]="search.id" (ngModelChange)="selected()" nzAllowClear />
+      </nz-input-group>
+      <ng-template #suffixIconSearch>
+        <span nz-icon nzType="search" *ngIf="this.search.id==''" style="color: #bfbfbf;"></span>
+        <span nz-icon nzType="close-circle" nzTheme="fill" *ngIf="this.search.id!=''" style="color: #bfbfbf;" (click)="this.search.id='';selected()"></span>
+      </ng-template>
+    </nz-col>
+    <nz-col nzSpan="7">
+      <nz-select [(ngModel)]="search.category" (ngModelChange)="selected()" nzPlaceHolder="Chọn danh mục" style="width: 100%;margin: 0 2px;" [nzNotFoundContent]="EmptyData" nzAllowClear>
+        <nz-option *ngFor="let cate of categories" [nzValue]="cate.category" [nzLabel]="cate.category"></nz-option>
+
+      </nz-select>
+    </nz-col>
+    <nz-col nzSpan="7">
+      <nz-select [(ngModel)]="search.trademark" (ngModelChange)="selected()" nzPlaceHolder="Chọn hãng" style="width: 100%;margin-left: 2px;" [nzNotFoundContent]="EmptyData" nzAllowClear>
+        <nz-option *ngFor="let trm of trademarks" [nzValue]="trm.name" [nzLabel]="trm.name"></nz-option>
+
+      </nz-select>
+    </nz-col>
+</nz-row>
+<div class="table" style="margin-top: 20px;">
+  <nz-table #table [nzData]="this.dataSet" [nzPageSize]="6" nzNoResult="Hiện tại không tìm thấy sản phẩm tương tự">
+    <thead>
+      <tr>
+        <th>STT</th>
+        <th>Mã sản phẩm</th>
+        <th>Sản phẩm</th>
+        <th>Độ dài</th>
+        <th>Số lượng</th>
+        <th>Giá</th>
+        <th [nzFilters]="listOfColumns.listOfFilter" [nzFilterFn]="listOfColumns.filterFn">Trạng thái</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of table.data;index as i">
+        <td>{{i+1}}</td>
+        <td>{{data._id}}</td>
+        <td>{{data.name + ' '+data.thickness + ' ' + data.tm}}</td>
+        <td>{{data.length}}</td>
+        <td>{{data.qty}}</td>
+        <td>{{this.crud.formatNumberToPrice(data.price)}}</td>
+        <td *ngIf="data.status==0" style="color:rgb(255, 99, 132);">Hết hàng</td>
+        <td *ngIf="data.status==1" style="color:rgb(255, 205, 86);">Sắp hết hàng</td>
+        <td *ngIf="data.status==2" style="color:rgb(75, 192, 192);">Còn hàng</td>
+        <td>
+
+          <span nz-icon nzType="delete" nzTheme="outline" style="color:rgb(255, 99, 132);cursor: pointer;"
+          nz-popconfirm
+              nzPopconfirmTitle="Muốn xóa sản phẩm này không ạ?"
+              (nzOnConfirm)="confirm(data.id,data.name,data._id)"
+              [nzOkText]="'Muốn'"
+              [nzCancelText]="'Không muốn'"
+              nzPopconfirmPlacement="topLeft"
+              nz-button></span>
+              <nz-divider nzType="vertical"></nz-divider>
+          <span nz-icon nzType="edit" nzTheme="outline" style="color:rgb(75, 192, 192);cursor: pointer;" (click)="isVisibleEdit=true;selectProduct=data"></span>
+
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>
+
+<nz-drawer
+      [nzClosable]="true"
+      [nzVisible]="isVisibleEdit"
+      nzPlacement="right"
+      nzTitle="CHỈNH SẢN PHẨM"
+      nzSize="large"
+
+      (nzOnClose)="isVisibleEdit=false"
+    >
+      <ng-container *nzDrawerContent>
+        <app-storage *ngIf="this.selectProduct" [dataOther]="this.selectProduct" [titleSpan]="{btnSubmit:'Chỉnh sửa'}" (dataModify)="updateDataProduct($event)" [parent]="1"></app-storage>
+      </ng-container>
+</nz-drawer>
+
+<ng-template #EmptyData>
+  <span ><span nz-icon nzType="inbox" nzTheme="outline"></span>    Hiện tại chưa có dữ liệu </span>
+</ng-template>
+
+
+
+
+
+

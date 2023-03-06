@@ -1,0 +1,26 @@
+
+<nz-modal [(nzVisible)]="isVisible" nzClosable="false" (nzOnCancel)="handleCancel()" nzCancelText="Hủy" nzOkText="Đăng nhập" (nzOnOk)="handleOk()">
+  <ng-container *nzModalContent>
+    <input nz-input placeholder="Tài khoản" [(ngModel)]="us"/>
+    <br />
+    <br />
+    <input nz-input placeholder="Mật khẩu" [(ngModel)]="pw"/>
+  </ng-container>
+</nz-modal>
+<div [ngSwitch]="view">
+  <div *ngSwitchCase="1">
+    <span>Mã số</span>
+    <nz-row style="align-items: center;">
+      <nz-select nz-col nzSpan="9" [(ngModel)]="selectedCollection" style="margin-right: 10px;">
+        <nz-option nzValue="Chọn collection" nzLabel="Chọn collection" nzDisabled></nz-option>
+        <nz-option *ngFor="let c of collection" [nzValue]="c.value" [nzLabel]="c.label"></nz-option>
+      </nz-select>
+      <input nz-col nzSpan="10" nz-input placeholder="Mã số" [(ngModel)]="value" style="margin: 10px 10px 10px 0;"/>
+      <button nz-button nz-col nzSpan="4" nz-row nzType="primary" (click)="deleteData()" >Xóa dữ liệu</button>
+    </nz-row>
+    <button nz-button nz-row nzType="primary" (click)="deleteAllData()" nzDanger>Xóa toàn bộ dữ liệu</button>
+  </div>
+  <div *ngSwitchDefault>
+    <button nz-button nzType="primary" (click)="showModal()">Kết nối admin</button>
+  </div>
+</div>

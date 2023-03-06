@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "milyhome-b9c0e": {
+      "hosting": {
+        "MILYHOME": [
+          "milyhome-b9c0e"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "milyhome-b9c0e"
+  }
+}

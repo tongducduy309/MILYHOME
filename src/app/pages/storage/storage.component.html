@@ -1,0 +1,237 @@
+<div class="header">
+</div>
+
+
+<!--
+0 Thêm sản phẩm
+1 Lưu chỉnh sửa
+2 Thêm sản phẩm bên ngoài
+
+ -->
+
+<nz-row>
+  <nz-col [nzSpan]="20">
+    <ul class="form_add_product" [formGroup]="importProduct">
+      <li *ngIf="this.parent!=2">
+        <nz-row>
+          <span nz-col [nzSpan]="4">Mã sản phẩm</span>
+          <input nz-col [nzSpan]="19" nz-input placeholder="Mã sản phẩm [Ví dụ: TM4ZDA]" [(ngModel)]="product._id" [disabled]="this.parent==1" formControlName="_id"/>
+        </nz-row>
+      </li>
+
+      <li>
+        <nz-row>
+          <span nz-col [nzSpan]="4">Tên sản phẩm</span>
+          <input nz-col [nzSpan]="19" nz-input placeholder="Tên sản phẩm [Ví dụ: Tôn màu]" [(ngModel)]="product.name" formControlName="name"/>
+        </nz-row>
+      </li>
+      <li>
+        <nz-row>
+          <span nz-col [nzSpan]="4">Độ dày</span>
+          <div nz-col [nzSpan]="19">
+            <nz-input-number nz-input [(ngModel)]="product.thickness" [nzMin]="0" [nzMax]="10" [nzStep]="0.05" style="width: 100%;" formControlName="thickness"/>
+            <span class="note">Độ dày [Ví dụ: 4]</span>
+          </div>
+        </nz-row>
+      </li>
+      <li>
+        <nz-row>
+          <span nz-col [nzSpan]="4">Độ dài</span>
+          <div nz-col [nzSpan]="19">
+            <input nz-input placeholder="Độ dài" [(ngModel)]="product.length" style="width: 100%;" formControlName="length"/>
+            <span class="note">Độ dài [Tính theo mm]</span>
+          </div>
+        </nz-row>
+      </li>
+      <li>
+        <nz-row>
+          <span nz-col [nzSpan]="4">Số lượng</span>
+          <div nz-col [nzSpan]="19">
+            <nz-input-number nz-input [(ngModel)]="product.qty" [nzMin]="1" [nzMax]="1000000" [nzStep]="1" style="width: 100%;" formControlName="qty"/>
+            <span class="note">Số lượng [*Mặc định = 1]</span>
+          </div>
+        </nz-row>
+      </li>
+      <li>
+        <nz-row>
+          <span nz-col [nzSpan]="4">Giá bán</span>
+          <input nz-col [nzSpan]="19" nz-input placeholder="Giá bán" [(ngModel)]="product.price" formControlName="price"/>
+        </nz-row>
+      </li>
+      <li>
+        <nz-row>
+
+          <div nz-col [nzSpan]="12">
+
+            <nz-row style="display: flex;align-items: center;">
+              <nz-select [(ngModel)]="product.category.index" (ngModelChange)="(product.category.index!=-1)?product.unit=categories[product.category.index].unit:product.unit=''" style="width: 65%;" nzPlaceHolder="Chọn danh mục" formControlName="category">
+                <nz-option nzValue="" nzLabel="Chọn danh mục" nzDisabled></nz-option>
+                <nz-option *ngFor="let cate of categories;index as i" [nzValue]="i" [nzLabel]="cate.category"></nz-option>
+
+              </nz-select>
+              <button style="width: 20%;margin: 0 1%;"nz-button nzType="primary" (click)="isAddCategory=true;"><span nz-icon nzType="plus" nzTheme="outline"></span></button>
+              <span nz-icon nzType="appstore" nzTheme="outline" style="width: 3%;color:rgb(54, 162, 235);cursor: pointer;" (click)="isEditCategory=true"></span>
+            </nz-row>
+            <span class="note">Nhấn dấu cộng để thêm mới  danh mục</span>
+          </div>
+          <div nz-col [nzSpan]="12">
+
+            <nz-row style="display: flex;align-items: center;">
+              <nz-select [(ngModel)]="product.tm" style="width: 65%;" nzPlaceHolder="Chọn hãng" formControlName="trademark">
+                <nz-option nzValue="Chọn hãng" nzLabel="Chọn hãng" nzDisabled></nz-option>
+                <nz-option *ngFor="let trm of trademarks" [nzValue]="trm.name" [nzLabel]="trm.name"></nz-option>
+
+              </nz-select>
+              <button style="width: 20%;margin: 0 1%;"nz-button nzType="primary" (click)="isAddTrademark=true;"><span nz-icon nzType="plus" nzTheme="outline"></span></button>
+              <span nz-icon nzType="appstore" nzTheme="outline" style="width: 3%;color:rgb(54, 162, 235);cursor: pointer;" (click)="isEditTrademark=true"></span>
+            </nz-row>
+            <span class="note">Nhấn dấu cộng để thêm mới hãng sản phẩm</span>
+          </div>
+
+        </nz-row>
+      </li>
+      <li>
+        <nz-row>
+          <span nz-col [nzSpan]="4">Đơn vị tính</span>
+          <input nz-col [nzSpan]="19" nz-input placeholder="Đơn vị tính [Mặc định tùy theo danh mục]" [(ngModel)]="product.unit" formControlName="unit"/>
+        </nz-row>
+      </li>
+
+    </ul>
+  </nz-col>
+
+  <nz-col [nzSpan]="4" *ngIf="this.parent==0" [formGroup]="importProduct">
+    <input nz-input placeholder="Mức cảnh báo" [(ngModel)]="product.alert" formControlName="alert"/>
+    <div class="footer">
+
+      <button nz-button nzType="primary" (click)="addProduct(template)" [disabled]="!this.importProduct.valid" style="margin-top: 10px;"> {{this.titleSpan.btnSubmit}} <span nz-icon nzType="send" nzTheme="outline"></span></button>
+
+    </div>
+  </nz-col>
+</nz-row>
+
+<div class="footer" *ngIf="this.parent!=0" >
+
+  <button *ngIf="this.parent==1" nz-button nzType="primary" (click)="saveDataModify()" [disabled]="!this.importProduct.valid"> {{this.titleSpan.btnSubmit}} <span nz-icon nzType="send" nzTheme="outline"></span></button>
+  <button *ngIf="this.parent==2" nz-button nzType="primary" (click)="addProduct(template)" [disabled]="!this.importProduct.valid"> {{this.titleSpan.btnSubmit}} <span nz-icon nzType="send" nzTheme="outline"></span></button>
+</div>
+
+<nz-modal [(nzVisible)]="isAddCategory" nzCancelText="Hủy" nzOkText="Đồng ý" nzClosable="false" (nzOnCancel)="isAddCategory=false;" (nzOnOk)="addCategory(categoryInput,unitInput,styleInput)">
+  <ng-container *nzModalContent>
+    <ul>
+      <li>
+        <nz-row>
+          <span nz-col [nzSpan]="5">Danh mục</span>
+          <div nz-col [nzSpan]="16">
+            <input nz-input placeholder="Danh mục" [(ngModel)]="categoryInput" style="width: 100%;"/>
+            <span class="note">Danh mục [Ví dụ: Tôn màu]</span>
+          </div>
+        </nz-row>
+
+      </li>
+
+      <li>
+        <nz-row>
+          <span nz-col [nzSpan]="5">Đơn vị</span>
+          <div nz-col [nzSpan]="16">
+            <input nz-input placeholder="Đơn vị" [(ngModel)]="unitInput" style="width: 100%;"/>
+            <span class="note">Đơn vị [Ví dụ: Tôn màu có đơn vị là m (mét)]</span>
+          </div>
+        </nz-row>
+      </li>
+      <li>
+        <nz-row>
+          <span nz-col [nzSpan]="5">Phương thức</span>
+          <div nz-col [nzSpan]="16">
+            <nz-select [(ngModel)]="styleInput" style="width: 100%;">
+              <nz-option nzValue="length" nzLabel="Tính toán theo độ dài"></nz-option>
+              <nz-option nzValue="qty" nzLabel="Tính toán theo số lượng"></nz-option>
+
+            </nz-select>
+            <span class="note">Tôn chọn mục [Tính toán theo độ dài] <br>Sắt chọn mục [Tính toán theo số lượng]</span>
+          </div>
+        </nz-row>
+      </li>
+    </ul>
+  </ng-container>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="isAddTrademark" nzCancelText="Hủy" nzOkText="Đồng ý" nzClosable="false" (nzOnCancel)="isAddTrademark=false;" (nzOnOk)="addTrademark(trademarkInput)">
+  <ng-container *nzModalContent>
+        <nz-row>
+          <span nz-col [nzSpan]="5">Hãng</span>
+          <div nz-col [nzSpan]="19">
+            <input nz-input placeholder="Danh mục" [(ngModel)]="trademarkInput" style="width: 100%;"/>
+            <span class="note">Ví dụ: Đông Á, Hoa sen, Đại Thiên Lộc, ...</span>
+          </div>
+        </nz-row>
+
+
+
+  </ng-container>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="isEditCategory" (nzOnCancel)="isEditCategory=false" nzCancelable="false" nzTitle="Danh mục sản phẩm" nzFooter="...">
+  <ng-container *nzModalContent>
+
+    <nz-table #table [nzData]="this.categories" [nzPageSize]="4" nzNoResult="Hiện tại chưa có danh mục nào!!">
+      <thead>
+        <tr>
+          <th>Danh mục</th>
+          <th>Đơn vị</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of table.data;index as i">
+          <td>{{data.category}}</td>
+          <td>{{data.unit}}</td>
+          <td>
+            <span nz-icon nzType="minus-circle" nzTheme="outline" style="cursor: pointer;color: rgb(255, 99, 132);" (click)="deleteCategory(data.id,i)"></span>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </ng-container>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="isEditTrademark" (nzOnCancel)="isEditTrademark=false" nzCancelable="false" nzTitle="Danh sách các hãng" nzFooter="...">
+  <ng-container *nzModalContent>
+
+    <nz-table #table [nzData]="this.trademarks" [nzPageSize]="4" nzNoResult="Hiện tại chưa có hãng nào!!">
+      <thead>
+        <tr>
+          <th>Hãng</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of table.data;index as i">
+          <td>{{data.name}}</td>
+          <td>
+            <span nz-icon nzType="minus-circle" nzTheme="outline" style="cursor: pointer;color: rgb(255, 99, 132);" (click)="deleteTrademark(data.id,i)"></span>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </ng-container>
+</nz-modal>
+
+<ng-template #template let-notification>
+  <div class="ant-notification-notice-content">
+    <div>
+      <div class="ant-notification-notice-description">
+        Mã sản phẩm đã tồn tại, vẫn muốn thêm sản phẩm này đúng không ạ?
+      </div>
+      <span class="ant-notification-notice-btn">
+        <button nz-button nzType="default"(click)="notification.close()">
+          <span>Sửa lại</span>
+        </button>
+        <button nz-button nzType="primary" (click)="notification.close();addProductToDB();">
+          <span>Đồng ý thêm</span>
+        </button>
+      </span>
+    </div>
+  </div>
+</ng-template>
+

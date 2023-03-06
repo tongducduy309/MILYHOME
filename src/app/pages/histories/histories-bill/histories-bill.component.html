@@ -1,0 +1,36 @@
+<div class="table" style="margin-top: 20px;" *ngIf="this.bills.length>0">
+  <nz-table #table [nzData]="this.bills" [nzShowPagination]="false">
+    <thead>
+      <tr>
+        <th>STT</th>
+        <th>Mã hóa đơn</th>
+        <th>Ngày giờ</th>
+        <th>Tổng tiền</th>
+        <th>Trạng thái</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody *ngIf="table.data.length>0">
+      <tr *ngFor="let data of table.data;index as i">
+        <td>{{i+1}}</td>
+        <td>{{data.id}}</td>
+        <td>{{data.time}}</td>
+        <td>{{this.crud.formatNumberToPrice(data.value)}}</td>
+        <td>{{data.status}}</td>
+        <td>
+          <span nz-icon nzType="undo" nzTheme="outline" style="color:rgb(54, 162, 235);cursor: pointer;"
+          nz-popconfirm
+          nzPopconfirmTitle="Chắc chắn muốn khôi phục hàng về kho ạ?"
+          [nzOkText]="'Muốn'"
+          [nzCancelText]="'Hủy'"
+          (nzOnConfirm)="confirm(data)"></span>
+          <nz-divider nzType="vertical"></nz-divider>
+          <span nz-icon nzType="eye" nzTheme="outline" style="color:rgb(75, 192, 192);cursor: pointer;" (click)="openDetailBill(data)" ></span>
+
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>
+<h4 *ngIf="this.bills.length<=0" style="width: 100%;text-align: center;">Hiện tại chưa có hóa đơn</h4>
+<app-bill *ngIf="detailBill" [bill]="this.selectBill" (deleteBill_evt)="deleteBill($event)" (closedetailBill)="detailBill=false;" [isVisibleBill]="detailBill"></app-bill>

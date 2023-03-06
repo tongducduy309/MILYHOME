@@ -1,0 +1,29 @@
+<div class="table" style="margin-top: 20px;">
+  <nz-table #table [nzData]="this.dataSet" [nzPageSize]="6" nzNoResult="Hiện tại chưa có lịch sử">
+    <thead>
+      <tr>
+        <th>STT</th>
+        <th>Thời gian</th>
+        <th>Mã số</th>
+        <th>Mã</th>
+        <th>Tên sản phẩm</th>
+        <th>Thao tác</th>
+
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of table.data;index as i">
+        <td>{{i+1}}</td>
+        <td>{{data.time}}</td>
+        <td>{{data.id}}</td>
+        <td>{{data._id}}</td>
+        <td>{{data.name}}</td>
+        <td *ngIf="data.title=='Thêm sản phẩm'" style="color:rgb(75, 192, 192);">{{data.title}}</td>
+        <td *ngIf="data.title=='Xóa sản phẩm'" style="color:rgb(255, 99, 132);">{{data.title}}</td>
+        <td *ngIf="data.title=='Cập nhật sản phẩm'" style="color:rgb(54, 162, 235)">{{data.title}}</td>
+        <td *ngIf="data.title=='Khôi phục sản phẩm - BN'" style="color:rgb(219, 243, 86)">{{data.title}}</td>
+
+      </tr>
+    </tbody>
+  </nz-table>
+</div>

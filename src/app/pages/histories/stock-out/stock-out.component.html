@@ -1,0 +1,34 @@
+<div class="table" style="margin-top: 20px;" *ngIf="this.stockout.length>0">
+  <nz-table #table [nzData]="this.stockout" [nzShowPagination]="false">
+    <thead>
+      <tr>
+        <th>Ngày giờ</th>
+        <th>Mã sản phẩm</th>
+        <th>Số lượng</th>
+        <th>Độ dài</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody *ngIf="table.data.length>0">
+      <tr *ngFor="let data of table.data">
+        <td>{{data.time}}</td>
+        <td>{{data.product._id}}</td>
+        <td>{{data.product.qty}}</td>
+        <td>{{data.product.length}}</td>
+        <td>
+          <span nz-icon nzType="undo" nzTheme="outline" style="color:rgb(54, 162, 235);cursor: pointer;"
+          nz-popconfirm
+          nzPopconfirmTitle="Chắc chắn muốn khôi phục hàng về kho ạ?"
+          [nzOkText]="'Muốn'"
+          [nzCancelText]="'Hủy'"
+          (nzOnConfirm)="confirm(data)"
+          (nzOnCancel)="cancel()"></span>
+
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>
+<h4 *ngIf="this.stockout.length<=0" style="width: 100%;text-align: center;">Hiện tại chưa có hóa đơn</h4>
+
+
